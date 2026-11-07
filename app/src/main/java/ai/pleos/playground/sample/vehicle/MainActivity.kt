@@ -2,7 +2,7 @@ package ai.pleos.playground.sample.vehicle
 
 import ai.pleos.playground.sample.vehicle.ui.screen.SampleApp
 import ai.pleos.playground.sample.vehicle.ui.theme.VehicleSampleAppTheme
-import ai.pleos.playground.sample.vehicle.driveclub.DriveClubApp
+import ai.pleos.playground.sample.vehicle.petgarden.PetGardenApp
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.activity.compose.BackHandler
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
 
             VehicleSampleAppTheme {
                 if (!sdkScreen) {
-                    DriveClubApp(onOpenSdk = { sdkScreen = true })
+                    PetGardenApp(onOpenSdk = { sdkScreen = true })
                 } else {
                 val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
                 SampleApp(

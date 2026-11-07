@@ -1,3 +1,9 @@
+> **Current development branch: 차 안의 작은 숲**
+>
+> The launcher on this branch opens an original local pet garden demo.
+> See [pet garden setup and verification](DRIVECLUB_MVP.md).
+> The SDK sample documented below remains available through developer diagnostics.
+
 # Pleos Vehicle SDK Android Sample
 
 An Android sample for integrating the Pleos Vehicle SDK `2.3.2`.
