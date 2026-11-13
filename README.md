@@ -1,3 +1,9 @@
+> **Current development branch: 플레오마루**
+>
+> Create your own resident, adopt a sheep, and greet the village neighbor 플레몽 in this local demo.
+> See [pet garden setup and verification](DRIVECLUB_MVP.md).
+> The SDK sample documented below remains available through developer diagnostics.
+
 # Pleos Vehicle SDK Android Sample
 
 An Android sample for integrating the Pleos Vehicle SDK `2.3.2`.
