@@ -13,9 +13,24 @@ data class GardenState(
     val journeys: Set<String> = emptySet(),
     val bonuses: Set<String> = emptySet(),
     val owned: Set<String> = emptySet(),
-    val placed: Set<String> = emptySet()
+    val placed: Set<String> = emptySet(),
+    val resident: Resident? = null
 ) {
     val level: Int get() = 1 + xp / 50
+}
+
+enum class Species(val label: String) { RABBIT("토끼"), BEAR("곰"), CAT("고양이") }
+enum class Badge(val label: String) { LEAF("새잎"), SUN("햇살"), MOON("초승달") }
+
+data class Resident(val name: String, val species: Species, val badge: Badge) {
+    init { require(name.isNotBlank() && name == limitName(name)) }
+
+    companion object {
+        fun limitName(value: String): String {
+            val count = value.codePointCount(0, value.length)
+            return if (count <= 12) value else value.substring(0, value.offsetByCodePoints(0, 12))
+        }
+    }
 }
 
 enum class Decoration(val label: String, val price: Int) {
@@ -24,10 +39,16 @@ enum class Decoration(val label: String, val price: Int) {
 
 object GardenEngine {
     private val careActions = setOf("pet", "feed", "rest")
-    fun adopt(name: String): GardenState {
+    fun moveIn(state: GardenState, name: String, species: Species, badge: Badge): GardenState {
+        if (state.resident != null) return state
+        return state.copy(resident = Resident(Resident.limitName(name.trim()), species, badge))
+    }
+
+    fun adopt(name: String, state: GardenState = GardenState()): GardenState {
+        if (state.name.isNotBlank()) return state
         val cleaned = name.trim().take(12)
         require(cleaned.isNotEmpty())
-        return GardenState(name = cleaned, leaves = 10)
+        return state.copy(name = cleaned, leaves = state.leaves + 10)
     }
     private fun today(state: GardenState, day: String): GardenState =
         if (state.day == day) state else state.copy(day = day, care = emptySet(), distanceXp = 0)

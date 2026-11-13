@@ -1,5 +1,6 @@
 package ai.pleos.playground.sample.vehicle.petgarden
 
+import ai.pleos.playground.sample.vehicle.R
 import ai.pleos.playground.sample.vehicle.driveclub.SeasonEngine
 import ai.pleos.playground.sample.vehicle.driveclub.demoDays
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,30 +48,35 @@ fun PetGardenApp(onOpenSdk: () -> Unit) {
         Surface(Modifier.fillMaxSize()) {
             Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Text("차 안의 작은 숲", style = MaterialTheme.typography.headlineLarge)
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineLarge)
                 Text("함께 다녀오고, 함께 자라는 우리", style = MaterialTheme.typography.titleMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Switch(checked = parked, onCheckedChange = { parked = it })
                     Text(if (parked) "개발용 정차 모드" else "주행 / 상태 미확인 · 게임 숨김")
                 }
                 if (!parked) {
-                    Text("주차 후 작은 숲에서 만나요.", style = MaterialTheme.typography.headlineSmall)
+                    Text("주차 후 플레오마루에서 만나요.", style = MaterialTheme.typography.headlineSmall)
                     Text("이 스위치는 데모용입니다. 실제 차량 상태 감지와 자동 제한은 아직 연결되지 않았습니다.")
                 } else {
                     if (error.isNotBlank()) Text(error, color = MaterialTheme.colorScheme.error)
                     if (!consent) {
-                        Text("작은 양 한 마리와 나만의 정원을 만나보세요.")
-                        Text("펫 이름·성장·꾸미기 기록을 이 기기에 저장합니다. 실제 위치나 차량 기록은 수집하지 않습니다.")
+                        Text("내 주민을 만들고, 플레몽이 사는 마을로 이사해요.")
+                        Text("주민 이름·모습, 반려 양과 정원 기록을 이 기기에 저장합니다. 실제 위치나 차량 기록은 수집하지 않습니다.")
                         Button(enabled = storageReadable, onClick = {
                             if (store.consent(true)) consent = true else error = "동의를 저장하지 못했습니다."
                         }) { Text("동의하고 시작") }
+                    } else if (state.resident == null) {
+                        ResidentCreator(returningPet = state.name) { residentName, species, badge ->
+                            val next = GardenEngine.moveIn(state, residentName, species, badge)
+                            update(next, "${next.resident?.name} 님, 플레오마루에 오신 걸 환영해요!")
+                        }
                     } else if (state.name.isBlank()) {
-                        GardenScene(GardenState())
-                        Text("새로운 친구에게 이름을 지어주세요.")
+                        GardenScene(state)
+                        Text("함께 지낼 반려 양에게 이름을 지어주세요.")
                         OutlinedTextField(value = name, onValueChange = { name = it.take(12) },
-                            label = { Text("펫 이름 · 최대 12자") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                            label = { Text("반려 양 이름 · 최대 12자") }, singleLine = true, modifier = Modifier.fillMaxWidth())
                         Button(enabled = name.isNotBlank(), onClick = {
-                            update(GardenEngine.adopt(name), "${name.trim()}의 숲에 오신 것을 환영해요. 첫 들꽃을 심어볼까요?")
+                            update(GardenEngine.adopt(name, state), "${name.trim()}의 숲에 오신 것을 환영해요. 첫 들꽃을 심어볼까요?")
                         }) { Text("우리 함께 살자") }
                     } else {
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -77,7 +84,8 @@ fun PetGardenApp(onOpenSdk: () -> Unit) {
                                 FilterChip(selected = tab == index, onClick = { tab = index }, label = { Text(label) })
                             }
                         }
-                        Text("${state.name}  ·  Lv.${state.level}  ·  잎사귀 ${state.leaves}", style = MaterialTheme.typography.titleLarge)
+                        Text(if (tab == 3) "플레오마루 마을" else "${state.resident?.name}의 정원", style = MaterialTheme.typography.titleMedium)
+                        Text("반려 양 ${state.name}  ·  Lv.${state.level}  ·  잎사귀 ${state.leaves}", style = MaterialTheme.typography.titleLarge)
                         Text("다음 성장까지 ${50 - state.xp % 50} 경험치")
                         if (tab != 2) GardenScene(state, village = tab == 3)
                         Card(Modifier.fillMaxWidth()) { Text(message, Modifier.padding(16.dp)) }
@@ -134,22 +142,24 @@ fun PetGardenApp(onOpenSdk: () -> Unit) {
                                 Text("동일 여정·시즌은 재실행 후에도 중복 보상하지 않습니다.")
                             }
                             3 -> {
-                                Text("마을 미리보기 · 나와 NPC 이웃 2마리")
-                                Text("구름이와 도토리가 쉬고 있어요. 실제 접속 이용자는 아니며 온라인 공유는 후속 단계입니다.")
-                                OutlinedButton(onClick = { message = "${state.name}가 손을 흔들자, 구름이와 도토리도 반갑게 인사해요." }) { Text("이웃에게 인사") }
+                                Text("마을 이웃 · 플레몽", style = MaterialTheme.typography.titleMedium)
+                                Text("플레몽은 이 기기의 마을에 사는 NPC예요.")
+                                OutlinedButton(onClick = {
+                                    message = "플레몽  “${state.resident?.name}, 기다렸어! 오늘은 나무 그늘에서 같이 쉴까?”"
+                                }) { Text("플레몽에게 인사") }
                             }
                         }
                     }
                     HorizontalDivider()
                     Text("로컬 개발 데모 · 거리·안전점수·이웃은 테스트입니다.", style = MaterialTheme.typography.bodySmall)
                     OutlinedButton(onClick = onOpenSdk) { Text("개발자 · Pleos SDK 진단") }
-                    TextButton(onClick = { resetDialog = true }) { Text("동의 철회 및 작은 숲 삭제") }
+                    TextButton(onClick = { resetDialog = true }) { Text("동의 철회 및 마을 기록 삭제") }
                 }
             }
         }
         if (resetDialog && parked) AlertDialog(onDismissRequest = { resetDialog = false },
-            title = { Text("작은 숲을 삭제할까요?") },
-            text = { Text("이 기기의 펫·정원·보상 기록과 동의가 삭제됩니다. 되돌릴 수 없습니다.") },
+            title = { Text("이 기기의 마을 기록을 삭제할까요?") },
+            text = { Text("이 기기의 주민·반려 양·정원·보상 기록과 동의가 삭제됩니다. 되돌릴 수 없습니다.") },
             confirmButton = { TextButton(onClick = {
                 if (store.clear()) { state = GardenState(); storageReadable = true; consent = false; name = ""; error = ""; message = "새로운 친구를 기다리고 있어요."; tab = 0 }
                 else error = "삭제하지 못했습니다. 다시 시도해주세요."

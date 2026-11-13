@@ -1,20 +1,36 @@
 package ai.pleos.playground.sample.vehicle.petgarden
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 
-/** Original code-drawn art: a woolly companion in a small forest clearing. */
+/** World positions follow the clearing. Portraits retain their intrinsic aspect ratios. */
 @Composable
 fun GardenScene(state: GardenState, village: Boolean = false) {
-    Canvas(Modifier.fillMaxWidth().height(300.dp)) {
+    BoxWithConstraints(Modifier.fillMaxWidth().height(300.dp).clipToBounds()) {
+        Clearing(state, Modifier.fillMaxSize())
+        state.resident?.let { resident ->
+            ResidentPortrait(resident.species, resident.badge, Modifier.align(Alignment.BottomCenter)
+                .offset(x = maxWidth * -.19f, y = -42.dp)
+                .width(maxWidth * .23f).height(150.dp))
+        }
+        if (village) Plemong(Modifier.align(Alignment.BottomCenter)
+            .offset(x = maxWidth * .25f, y = -46.dp)
+            .width(maxWidth * .23f).height(160.dp))
+    }
+}
+
+@Composable
+private fun Clearing(state: GardenState, modifier: Modifier) {
+    Canvas(modifier) {
         val sx = size.width / 900f
         val sy = size.height / 340f
         fun oval(color: Color, x: Float, y: Float, w: Float, h: Float) =
@@ -50,10 +66,6 @@ fun GardenScene(state: GardenState, village: Boolean = false) {
             oval(Color(0xFFE3A69A), x + 33, y + 33, 9f, 5f)
         }
         sheep(475f, 202f, Color(0xFFFFFCED))
-        if (village) {
-            sheep(620f, 215f, Color(0xFFD4E4EC))
-            sheep(180f, 230f, Color(0xFFF0D9CC))
-        }
         if (Decoration.FLOWERS.name in state.placed) {
             listOf(400f, 430f, 460f).forEach { x ->
                 rect(Color(0xFF789758), x, 275f, 4f, 25f)

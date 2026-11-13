@@ -1,6 +1,6 @@
-> **Current development branch: 차 안의 작은 숲**
+> **Current development branch: 플레오마루**
 >
-> The launcher on this branch opens an original local pet garden demo.
+> Create your own resident, adopt a sheep, and greet the village neighbor 플레몽 in this local demo.
 > See [pet garden setup and verification](DRIVECLUB_MVP.md).
 > The SDK sample documented below remains available through developer diagnostics.
 

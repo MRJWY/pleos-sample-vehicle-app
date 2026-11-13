@@ -1,12 +1,13 @@
-# Little Forest in the Car: pet garden MVP
+# 플레오마루: pet garden MVP
 
-The launcher now opens **차 안의 작은 숲**, an original pet-and-garden experience.
+The launcher now opens **플레오마루**, an original pet-and-garden experience.
 A woolly companion welcomes the user into a small forest clearing. The earlier
 DriveClub season engine is reused for optional score-history rewards; its former
 ranking/coupon screen is no longer the launcher experience.
 
 ## Playable local slice
 
+- Create a resident by choosing a name, species (rabbit, bear, cat), and lapel pin (leaf, sun, moon). Existing gardens add a resident without changing pet or rewards.
 - Name and adopt one sheep companion; receive 10 starter leaves.
 - Three daily care actions (pet, feed, rest), each giving 5 XP and 3 leaves once
   per Korea calendar day. No driving required; no absence penalty or pet decay.
@@ -17,7 +18,7 @@ ranking/coupon screen is no longer the launcher experience.
   switching. Missing/low scores never damage the pet.
 - Three original garden decorations, purchase-once ownership and free placement/
   storage. Original Compose Canvas artwork changes with placed decorations.
-- Local village preview with two explicitly labeled NPC neighbors and greeting.
+- Local village preview with your resident, your sheep and the fixed NPC neighbor 플레몽.
   No online presence or multiplayer is claimed.
 - Names, growth, care limits, reward IDs, ownership and placement persist in a
   separate preference store. UI state changes only after a successful save.
@@ -45,24 +46,20 @@ bash gradlew testDebugUnitTest assembleDebug
 bash gradlew installDebug
 ```
 
-In this workspace the Gradle wrapper download fails with `Network is unreachable`
-before compilation. Neither the new tests nor the APK have been executed. There
-are nine new GardenEngine test cases for daily growth, rest-day growth, daily
-caps across journeys, replay protection, season eligibility, purchases, placement
-and invalid inputs. The nine original SeasonEngine tests remain in source.
-`git diff --check` passes. No emulator screenshot or visual QA is claimed.
+The 22 garden, resident and season tests passed using the Kotlin 2.0 compiler and JUnit on the JVM.
+The Android APK and device workflow still need verification in Android Studio.
 
 ## Manual acceptance checks
 
 1. Launch: game is hidden in driving/unknown test mode. Enable parked test mode.
-2. Consent, name the pet, adopt. Check starter leaves = 10.
+2. Consent, create your resident, then name and adopt your sheep. Check starter leaves = 10.
 3. Care three times: XP = 15, leaves = 19. Each action is unavailable until the
    next Korea calendar day. Driving is not required.
 4. Buy flowers: leaves = 9; flowers appear. Store and place for no extra charge.
 5. Apply the test return journey: XP = 27, leaves = 21. Repeat/restart: no payout.
 6. Low/missing scores: season reward disabled; pet unchanged. Normal scores:
    grant 15 leaves once. Switch scenarios and restart: cannot claim again.
-7. Visit village: two NPCs and greeting; no real-user presence claim.
+7. Visit the village and greet 플레몽. The fixed NPC addresses your resident by name.
 8. Restart and check name, XP, inventory and placed items. Toggle driving mode:
    game scene and controls disappear.
 9. Delete: cancel preserves the garden; confirm removes garden data and consent.
