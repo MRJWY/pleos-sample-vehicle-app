@@ -7,6 +7,14 @@
 
 현재 실행 화면은 지역 선택 → 개인 기록 → 지역 공동 목표 → 두 부문 순위로 이어지는 로컬 프로토타입입니다. 모든 거리·점수·이웃은 테스트 데이터이고, 실제 차량 수집·공유 서버·포인트 지급은 후속 개발 범위입니다.
 
+## 커뮤니티 화면
+
+공동 목표를 중심으로 구성한 차량형 대시보드와 모바일 화면입니다. 아래 이미지는 Android UI를 테스트 데이터로 렌더링한 결과입니다.
+
+![차량형 커뮤니티 대시보드](docs/images/community-dashboard.png)
+
+<img src="docs/images/community-mobile.png" alt="모바일 커뮤니티 화면" width="300" />
+
 # Pleos Vehicle SDK Android Sample
 
 An Android sample for integrating the Pleos Vehicle SDK `2.3.2`.
