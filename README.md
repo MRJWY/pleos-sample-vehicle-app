@@ -1,8 +1,11 @@
-> **Current development branch: 플레오마루**
->
-> Create your own resident, adopt a sheep, and greet the village neighbor 플레몽 in this local demo.
-> See [pet garden setup and verification](DRIVECLUB_MVP.md).
-> The SDK sample documented below remains available through developer diagnostics.
+# 플레오마루 지역 운전자 커뮤니티
+
+사용자가 선택한 거주 지역에 일상 주행을 모으고, 주행거리와 안전운전 두 부문 순위를 확인하는 차량용 커뮤니티 앱입니다.
+
+- [최신 기획서](PLEOMARU_PLAN.md)
+- [데모 실행과 검증](DRIVECLUB_MVP.md)
+
+현재 실행 화면은 지역 선택 → 개인 기록 → 지역 공동 목표 → 두 부문 순위로 이어지는 로컬 프로토타입입니다. 모든 거리·점수·이웃은 테스트 데이터이고, 실제 차량 수집·공유 서버·포인트 지급은 후속 개발 범위입니다.
 
 # Pleos Vehicle SDK Android Sample
 
@@ -10,6 +13,8 @@ An Android sample for integrating the Pleos Vehicle SDK `2.3.2`.
 The Door Position flow is the official, typed SDK reference in this repository.
 The in-app API catalog is a companion screen for discovering public method names,
 parameters, and operation order before writing application code.
+
+The community branch uses Vehicle SDK 2.3.2, matching the SDK sample screenshots below.
 
 ## What is included
 

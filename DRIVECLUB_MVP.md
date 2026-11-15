@@ -1,73 +1,51 @@
-# 플레오마루: pet garden MVP
+# 플레오마루 지역 커뮤니티 MVP
 
-The launcher now opens **플레오마루**, an original pet-and-garden experience.
-A woolly companion welcomes the user into a small forest clearing. The earlier
-DriveClub season engine is reused for optional score-history rewards; its former
-ranking/coupon screen is no longer the launcher experience.
+현재 시작 화면은 community/CommunityApp.kt입니다. 기획은 [PLEOMARU_PLAN.md](PLEOMARU_PLAN.md)를 참조하세요.
 
-## Playable local slice
+## 이번 데모
 
-- Create a resident by choosing a name, species (rabbit, bear, cat), and lapel pin (leaf, sun, moon). Existing gardens add a resident without changing pet or rewards.
-- Name and adopt one sheep companion; receive 10 starter leaves.
-- Three daily care actions (pet, feed, rest), each giving 5 XP and 3 leaves once
-  per Korea calendar day. No driving required; no absence penalty or pet decay.
-- A test 12 km journey gives 12 XP/leaves once per day. The engine shares a
-  20 XP/leaves daily distance cap across journeys, with persistent journey IDs.
-- Normal/low/missing test score histories reuse the four-week validation engine.
-  A fully eligible test season grants 15 leaves once, independently of scenario
-  switching. Missing/low scores never damage the pet.
-- Three original garden decorations, purchase-once ownership and free placement/
-  storage. Original Compose Canvas artwork changes with placed decorations.
-- Local village preview with your resident, your sheep and the fixed NPC neighbor 플레몽.
-  No online presence or multiplayer is claimed.
-- Names, growth, care limits, reward IDs, ownership and placement persist in a
-  separate preference store. UI state changes only after a successful save.
-- Confirmed erasure of this pet garden's local state and consent. Older DriveClub
-  demo preferences are separate and are not migrated or erased by this action.
+1. 실행하면 주행/미확인 상태로 상세 화면을 숨깁니다.
+2. 개발용 정차 모드를 켜고 시연용 거주 지역을 선택한 뒤 기기 내 저장에 동의합니다.
+3. 내 기록의 테스트 귀가 기록 반영을 누릅니다. 테스트 거리 30km와 시험 점수 94가 추가되고 참여일은 하루 늘어납니다.
+4. 우리 동네 화면에서 나의 기여와 가상 이웃의 합산 거리, 주간 목표 달성을 확인합니다. 목표 100km와 이웃 합계 70km는 단일 기록으로 완료 흐름을 보여주기 위한 테스트 값입니다.
+5. 지역 순위에서 주행거리와 안전운전 순위를 각각 확인합니다. 결측 점수는 순위에서 제외하고 확인 대기로 표시합니다. 동점자는 공동 순위입니다.
+6. 응원을 남기면 이 기기에 저장됩니다. 다른 기기에 게시되지 않습니다.
+7. 귀가 버튼을 다시 누르거나 앱을 재시작해도 같은 당일 기록이 중복 합산되지 않습니다.
+8. 기록이 생긴 주에는 지역을 바꿀 수 없습니다. 다음 주에는 다른 지역을 선택할 수 있습니다. 이전 기록은 원래 주간·지역에 남습니다.
+9. 삭제에서 취소하면 유지되고, 확인하면 이번 커뮤니티의 저장 기록과 동의가 삭제됩니다.
 
-## Driving restrictions and data provenance
+## 데이터와 실행 조건
 
-This build remains a development demo. Distance and scores are fixtures, not SDK
-measurements. It does not collect location or actual vehicle history. The parked
-switch is a developer simulation; every Activity creation starts restricted and
-hides the game until the test switch is enabled. A production release needs real
-CarUxRestrictions integration and lifecycle verification, including SDK diagnostics.
-The manual switch is not an acceptable production safety gate.
+거리, 점수, 이웃과 지역 합계는 전부 테스트 데이터입니다. 개발용 정차 스위치는 실제 주차 신호가 아닙니다. 실제 차량 위치·주행 기록·안전운전점수·서버 공유·포인트 지급은 연동되지 않았습니다.
 
-The existing SDK explorer remains available from the parked development screen.
-The Vehicle ViewModel is lazily opened there, not required to start the garden.
+화면에서 내비게이션 사용과 무관하게 집계한다는 설명은 서비스 기획입니다. 현재 실제 내비게이션이나 Odometer 구독을 시작하지 않습니다.
 
-## Build / verification
+기존 정원과 DriveClub 데모의 별도 저장소는 보존됩니다. 삭제 기능은 이번 커뮤니티 저장소에만 적용됩니다.
 
-JDK 17 and Android SDK 35:
+JVM 단위 테스트와 APK 빌드:
 
-```bash
+~~~bash
 bash gradlew testDebugUnitTest assembleDebug
 bash gradlew installDebug
-```
+~~~
 
-The 22 garden, resident and season tests passed using the Kotlin 2.0 compiler and JUnit on the JVM.
-The Android APK and device workflow still need verification in Android Studio.
+Windows PowerShell:
 
-## Manual acceptance checks
+~~~powershell
+.\gradlew.bat testDebugUnitTest assembleDebug
+.\gradlew.bat installDebug
+~~~
 
-1. Launch: game is hidden in driving/unknown test mode. Enable parked test mode.
-2. Consent, create your resident, then name and adopt your sheep. Check starter leaves = 10.
-3. Care three times: XP = 15, leaves = 19. Each action is unavailable until the
-   next Korea calendar day. Driving is not required.
-4. Buy flowers: leaves = 9; flowers appear. Store and place for no extra charge.
-5. Apply the test return journey: XP = 27, leaves = 21. Repeat/restart: no payout.
-6. Low/missing scores: season reward disabled; pet unchanged. Normal scores:
-   grant 15 leaves once. Switch scenarios and restart: cannot claim again.
-7. Visit the village and greet 플레몽. The fixed NPC addresses your resident by name.
-8. Restart and check name, XP, inventory and placed items. Toggle driving mode:
-   game scene and controls disappear.
-9. Delete: cancel preserves the garden; confirm removes garden data and consent.
+JDK 17, Android SDK 35와 Gradle 의존성 저장소 접근이 필요합니다. 테스트용 기기는 일반 Android 환경도 사용할 수 있지만, SDK 진단은 호환 Pleos Vehicle Service가 있어야 합니다.
 
-## Next scope
+## 검증 결과
 
-Real Odometer/CarInfo + verified driver attribution; approved safety-score source;
-automatic platform driving restrictions; server-authoritative reward idempotency;
-authenticated shared village and presence; richer animation, audio and content.
-Local time/preferences can be altered, so local rewards are demonstration state,
-not trusted multiplayer economy. The game works without safety-score integration.
+이번 변경은 JDK 17·Android SDK 35·Vehicle SDK 2.3.2 환경에서 JVM 단위 테스트 32건과 assembleDebug 빌드를 통과했습니다. 실제 단말 화면 조작과 차량 데이터 연동은 추가 검증 대상입니다.
+
+## 후속 개발
+
+- Vehicle SDK의 Odometer 실제 연결, 날짜별 운행 이력과 점수 제공 경로 검증.
+- CarUxRestrictions와 주차 신호 연동, SDK 진단까지 포함한 주행 제한 검증.
+- 계정·차량·운전자 귀속과 서버 기반 기록 집계, 재전송·중복 검증.
+- 실제 전국 시·군·구 목록, 지역 챌린지 운영과 서버 공유 커뮤니티.
+- 포인트 제휴와 서버 원장. 클라이언트 테스트 기록을 보상 지급 근거로 사용하지 않습니다.
